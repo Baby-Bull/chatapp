@@ -8,9 +8,9 @@ const {
 const router = require("express").Router();
 
 router.get("/", getAllUsers);
-router.get("/:id", getSingleUser);
-router.patch("/:id", updateUser);
-router.delete("/:id", deleteUser);
+router.get("/:_id", getSingleUser);
+router.patch("/:_id", updateUser);
+router.delete("/:_id", deleteUser);
 
 
 module.exports = {

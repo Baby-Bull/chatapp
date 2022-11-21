@@ -1,11 +1,12 @@
-const router = require("express").Router();
+const { userRepository } = require("../repositories/user.repository");
+
 const User = require("../entities/user");
 
 // to-do use a common file to abstract all activities ****************************
 
 const getAllUsers = async (req, res) => {
     try {
-        const users = await User.find();
+        const users = await userRepository.getAll()
         res.status(200).json(users);
     } catch (error) {
         res.status(500).json(error);
@@ -14,9 +15,13 @@ const getAllUsers = async (req, res) => {
 
 const getSingleUser = async (req, res) => {
     try {
-        const rawUser = User.findById(req.params.id);
-        const { password, ...others } = rawUser._doc;
-        res.status(200).json(others);
+        const rawUser = await userRepository.findOne(req.params.id);
+        if (rawUser) {
+            const { password, ...others } = rawUser._doc;
+            res.status(200).json(others);
+        } else {
+            res.status(404).json("User not found.")
+        }
     } catch (error) {
         res.status(500).json(error);
     }
@@ -25,7 +30,7 @@ const getSingleUser = async (req, res) => {
 const updateUser = async (req, res) => {
     try {
         if (req.params.id === req.body.id) {
-            const updatedUser = User.findByIdAndUpdate(
+            const updatedUser = userRepository.updateSingle(
                 req.params.id,
                 {
                     $set: rep.body,
@@ -43,17 +48,20 @@ const updateUser = async (req, res) => {
 
 const deleteUser = async (req, res) => {
     try {
-        const foundUser = User.findById(req.params.id);
-        if (foundUser.id === req.body.id) {
-            try {
-                await User.deleteOne({ id: foundUser.id })
-                res.status(200).json("delete User successful");
-            } catch (error) {
-                res.status(500).json(error);
-            }
+        const foundUser = userRepository.findOne(req.params.id);
+        if (foundUser) {
+            if (foundUser.id === req.body.id) {
+                try {
+                    await userRepository.deleteOne(foundUser.id)
+                    res.status(200).json("delete user successful");
+                } catch (error) {
+                    res.status(500).json(error);
+                }
+            } else
+                res.status(401).json("Error permission")
+        } else {
+            res.status(404).json("User not found.")
         }
-        else
-            res.status(401).json("Error permission")
     } catch (error) {
         res.status(500).json(error);
     }
