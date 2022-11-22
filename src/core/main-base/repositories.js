@@ -1,16 +1,8 @@
-const Collection = require("mongoose");
-
 
 class BaseRepository {
     constructor(entity) {
         this._collection = entity
     }
-    _collection;
-
-
-    // async get(_id: string) {
-    //     return this._collection.findOne()
-    // }
 
     async getAll() {
         return this._collection.find();
@@ -20,8 +12,16 @@ class BaseRepository {
         return this._collection.createIndex(newEntity);
     }
 
+    async saveObject(newEntity) {
+        return newEntity.save();
+    }
+
+    async find(option = {}) {
+        return this._collection.findOne(option);
+    }
+
     async findOne(_id) {
-        return this._collection.findOne({ _id: _id })
+        return this._collection.findOne({ _id: _id });
     }
 
     async updateSingle(_id, entityAttrs, options = {}) {

@@ -5,6 +5,10 @@ class UserRepository extends BaseRepository {
     constructor(entity) {
         super(entity)
     }
+
+    // async findUserByEmail(email) {
+    //     return this.find({ "email": email });
+    // }
 }
 
 module.exports = {

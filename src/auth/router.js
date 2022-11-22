@@ -7,4 +7,7 @@ const {
 router.post("/register", registerUser);
 router.post("/login", loginUser);
 
-module.exports = router;
+module.exports = {
+    path: "/auth",
+    router: router
+}

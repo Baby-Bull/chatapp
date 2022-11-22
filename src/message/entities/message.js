@@ -21,8 +21,8 @@ const Message = new mongoose.Schema(
         },
         content_type: {
             type: String,
-            enum: messageTypeEnum,
-            default: messageTypeEnum.Text
+            enum: MessageTypeEnum,
+            default: MessageTypeEnum.Text
         },
         chatRoom_id: {
             type: String,

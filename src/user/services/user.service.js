@@ -1,12 +1,15 @@
 const { userRepository } = require("../repositories/user.repository");
 
-const User = require("../entities/user");
-
 // to-do use a common file to abstract all activities ****************************
 
 const getAllUsers = async (req, res) => {
     try {
-        const users = await userRepository.getAll()
+        let users
+        if (req.body.email) {
+            users = await userRepository.findUserByEmail(req.body.email)
+        } else {
+            users = await userRepository.getAll()
+        }
         res.status(200).json(users);
     } catch (error) {
         res.status(500).json(error);
@@ -15,7 +18,7 @@ const getAllUsers = async (req, res) => {
 
 const getSingleUser = async (req, res) => {
     try {
-        const rawUser = await userRepository.findOne(req.params.id);
+        const rawUser = await userRepository.findOne(req.params._id);
         if (rawUser) {
             const { password, ...others } = rawUser._doc;
             res.status(200).json(others);
