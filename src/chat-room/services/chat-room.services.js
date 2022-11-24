@@ -28,6 +28,15 @@ const getChatRoom = async (req, res) => {
 //     }
 // }
 
+const getAllMembersInChatRoom = async (chatRoomId) => {
+    const chatRoom = await chatRoomRepository.findOne({ _id: chatRoomId });
+    return chatRoom.members || [];
+}
+const getAllMessagesInChatRoom = async (chatRoomId) => {
+    const chatRoom = await chatRoomRepository.findOne({ _id: chatRoomId });
+    return chatRoom.messages || [];
+}
+
 const createNewChatRoom = async (req, res) => {
     try {
         const newChatRoom = new ChatRoom(req.body.chatRoom);
@@ -45,5 +54,7 @@ const createNewChatRoom = async (req, res) => {
 
 module.export = {
     getAllChatrooms,
-    getChatRoom
+    getChatRoom,
+    getAllMembersInChatRoom,
+    getAllMessagesInChatRoom,
 }
