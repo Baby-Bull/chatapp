@@ -51,10 +51,38 @@ const createNewChatRoom = async (req, res) => {
     }
 }
 
+const sendNewMessageToChatRoom = async (req, res) => {
+    try {
+
+    } catch (error) {
+
+    }
+}
+
+const getMembersInChatRoom = async (chatRoomId) => {
+    try {
+        const chatRoomCurent = await chatRoomRepository.find(chatRoomId);
+        if (chatRoomCurent) {
+            return chatRoomCurent.members
+        } else {
+            return null;
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 
 module.export = {
-    getAllChatrooms,
-    getChatRoom,
-    getAllMembersInChatRoom,
-    getAllMessagesInChatRoom,
+    chatRoomRepo: {
+        getAllChatrooms: getAllChatrooms(),
+        getChatRoom,
+        getAllMembersInChatRoom,
+        getAllMessagesInChatRoom,
+    },
+    chatRoomInternalRepo: {
+        createNewChatRoom,
+        sendNewMessageToChatRoom,
+        getMembersInChatRoom: getMembersInChatRoom(),
+    }
 }
