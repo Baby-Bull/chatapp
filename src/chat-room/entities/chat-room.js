@@ -5,17 +5,18 @@ const ChatRoomTypeEnum = {
     Group: "group"
 }
 
-const ChatRoom = mongoose.Schema(
+const ChatRoomSchema = new mongoose.Schema(
     {
         id: {
             type: String,
-            require: true,
+            required: true,
             generate: true,
         },
         type: {
             type: String,
             enum: ChatRoomTypeEnum,
-            require: true
+            required: true,
+            //default: ChatRoomTypeEnum.Personal,
         },
         members: {
             type: Array,
@@ -26,9 +27,6 @@ const ChatRoom = mongoose.Schema(
             default: []
         }
     }, { timestamp: true }
-)
+);
 
-module.exports = {
-    ChatRoom,
-    ChatRoomTypeEnum
-}
+module.exports = mongoose.model("ChatRoom", ChatRoomSchema);

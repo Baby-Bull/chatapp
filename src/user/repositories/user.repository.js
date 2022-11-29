@@ -1,14 +1,14 @@
 const { BaseRepository } = require("../../core/main-base/repositories.js")
-const User = require("../../user/entities/user.js")
+const User = require("../entities/user.js")
 
 class UserRepository extends BaseRepository {
     constructor(entity) {
         super(entity)
     }
 
-    // async findUserByEmail(email) {
-    //     return this.find({ "email": email });
-    // }
+    async findUserByEmail(email) {
+        return this.findByOption({ "email": email });
+    }
 }
 
 module.exports = {

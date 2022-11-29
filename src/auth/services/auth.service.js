@@ -1,5 +1,5 @@
 const User = require("../../user/entities/user");
-const userRepository = require("../../user/repositories/user.repository");
+const { userRepository } = require("../../user/repositories/user.repository");
 const { authRepository } = require("../repositories/auth.repository");
 
 
@@ -27,7 +27,7 @@ const registerUser = async (req, res) => {
 const loginUser = async (req, res) => {
     try {
         //to do: encrypt password to compare, dont rcm using raw password  
-        const user = userRepository.findOne({ email: req.body.email });
+        const user = await userRepository.findUserByEmail(req.body.email);
         if (!user)
             res.status(404).json("User not found");
         else {

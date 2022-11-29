@@ -4,7 +4,7 @@ const User = require("../../user/entities/user");
 
 class AuthRepository extends BaseRepository {
     constructor(entity) {
-        super(entity)
+        super(entity);
     }
 }
 

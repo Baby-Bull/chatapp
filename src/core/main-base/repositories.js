@@ -16,12 +16,16 @@ class BaseRepository {
         return newEntity.save();
     }
 
-    async find(option = {}) {
-        return this._collection.findOne(option);
+    // async find(option = {}) {
+    //     return this._collection.findOne(option);
+    // }
+
+    async findSingle(_id) {
+        return this._collection.findOne({ _id: _id }) || {};
     }
 
-    async findOne(_id) {
-        return this._collection.findOne({ _id: _id });
+    async findByOption(options = {}) {
+        return this._collection.findOne(options) || {};
     }
 
     async updateSingle(_id, entityAttrs, options = {}) {

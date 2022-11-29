@@ -1,12 +1,11 @@
-const { json } = require("express");
-const { ChatRoom } = require("../entities/chat-room")
+const ChatRoom = require("../entities/chat-room")
 const { chatRoomMemberRepository } = require("../repositories/chat-room-member.repository");
 const { chatRoomRepository } = require("../repositories/chat-room.repository");
 
 
 const getAllChatrooms = async (req, res) => {
     try {
-        const chatrooms = chatRoomRepository.getAll();
+        const chatrooms = await chatRoomRepository.getAll();
         res.status(200).json(chatrooms);
     } catch (error) {
         res.status(500).json(error);
@@ -15,74 +14,65 @@ const getAllChatrooms = async (req, res) => {
 
 const getChatRoom = async (req, res) => {
     try {
-        const chatroom = chatRoomRepository.findOne(req.body._id);
+        const chatroom = await chatRoomRepository.findSingle(req.params._id);
         res.status(200).json(chatroom);
     } catch (error) {
         res.status(500).json(error)
     }
 }
 
-// const sendMessageToChatRoom = async (req, res) => {
-//     try {
-//     } catch (error) {
-//     }
-// }
-
-const getAllMembersInChatRoom = async (chatRoomId) => {
-    const chatRoom = await chatRoomRepository.findOne({ _id: chatRoomId });
-    return chatRoom.members || [];
-}
-const getAllMessagesInChatRoom = async (chatRoomId) => {
-    const chatRoom = await chatRoomRepository.findOne({ _id: chatRoomId });
-    return chatRoom.messages || [];
-}
-
 const createNewChatRoom = async (req, res) => {
+    const newChatRoom = new ChatRoom(req.body);
     try {
-        const newChatRoom = new ChatRoom(req.body.chatRoom);
-        try {
-            const savedRoom = chatRoomRepository.create(newChatRoom);
-            res.status(200).json(savedRoom);
-        } catch (error) {
-            res.status(500).json(error)
-        }
+        const savedRoom = await chatRoomRepository.saveObject(newChatRoom);
+        res.status(200).json(savedRoom);
     } catch (error) {
-        req.status(500).json(error)
+        res.status(500).json(error);
     }
 }
 
-const sendNewMessageToChatRoom = async (req, res) => {
+const sendNewMessageToChatRoom = async (chatRoomId, dataCreateMessage) => {
+    const currentChatRoom = await chatRoomRepository.findChatRoomById(chatRoomId);
+    const newMessage = await createNewMessage(dataCreateMessage); // modify if have chance messages from client
     try {
-
+        await currentChatRoom.updateOne({ $push: { messages: newMessage } })
     } catch (error) {
-
+        console.log(error);
     }
 }
 
-const getMembersInChatRoom = async (chatRoomId) => {
+const findAllMembersInChatRoom = async (chatRoomId) => {
     try {
-        const chatRoomCurent = await chatRoomRepository.find(chatRoomId);
-        if (chatRoomCurent) {
-            return chatRoomCurent.members
-        } else {
+        const currentChatRoom = await chatRoomRepository.findSingle(chatRoomId);
+        if (currentChatRoom)
+            return currentChatRoom.members || [];
+        else
             return null;
-        }
+    } catch (error) {
+        console.log(error);
+        return error;
+    }
+}
+
+const findAllMessagesInChatRoom = async (chatRoomId) => {
+    try {
+        const currentChatRoom = await chatRoomRepository.findSingle(chatRoomId);
+        return currentChatRoom.messages || [];
     } catch (error) {
         console.log(error);
     }
 }
 
 
-module.export = {
-    chatRoomRepo: {
-        getAllChatrooms: getAllChatrooms(),
-        getChatRoom,
-        getAllMembersInChatRoom,
-        getAllMessagesInChatRoom,
-    },
-    chatRoomInternalRepo: {
-        createNewChatRoom,
-        sendNewMessageToChatRoom,
-        getMembersInChatRoom: getMembersInChatRoom(),
-    }
+module.exports = {
+    getAllChatrooms,
+    getChatRoom,
+    createNewChatRoom,
+
+    //do not use request and response  ******
+    findAllMembersInChatRoom,
+    findAllMessagesInChatRoom,
+
+    //using websocket *functions*****************
+    sendNewMessageToChatRoom,
 }

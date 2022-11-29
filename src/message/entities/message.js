@@ -5,14 +5,13 @@ const MessageTypeEnum = {
     File: "file",
     Image: "image",
     FirstMessage: ""
-}
+};
 
-
-const Message = new mongoose.Schema(
+const MessageSchema = new mongoose.Schema(
     {
         id: {
             type: String,
-            require: true,
+            required: true,
             generate: true,
         },
         content: {
@@ -26,17 +25,14 @@ const Message = new mongoose.Schema(
         },
         chatRoom_id: {
             type: String,
-            require: true
+            required: true
         },
         sender_id: {
             type: String,
-            require: true,
+            required: true,
         }
     },
     { timestamps: true }
 );
 
-module.exports = {
-    Message,
-    MessageTypeEnum
-}
+module.exports = mongoose.model("Message", MessageSchema);

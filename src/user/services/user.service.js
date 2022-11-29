@@ -1,14 +1,12 @@
 const { userRepository } = require("../repositories/user.repository");
 
-// to-do use a common file to abstract all activities ****************************
-
 const getAllUsers = async (req, res) => {
     try {
         let users
         if (req.body.email) {
-            users = await userRepository.findUserByEmail(req.body.email)
+            users = await userRepository.findUserByEmail(req.body.email);
         } else {
-            users = await userRepository.getAll()
+            users = await userRepository.getAll();
         }
         res.status(200).json(users);
     } catch (error) {
@@ -18,7 +16,7 @@ const getAllUsers = async (req, res) => {
 
 const getSingleUser = async (req, res) => {
     try {
-        const rawUser = await userRepository.findOne(req.params._id);
+        const rawUser = await userRepository.findSingle(req.params._id);
         if (rawUser) {
             const { password, ...others } = rawUser._doc;
             res.status(200).json(others);
@@ -51,7 +49,7 @@ const updateUser = async (req, res) => {
 
 const deleteUser = async (req, res) => {
     try {
-        const foundUser = userRepository.findOne(req.params.id);
+        const foundUser = await userRepository.findOne(req.params.id);
         if (foundUser) {
             if (foundUser.id === req.body.id) {
                 try {
@@ -70,9 +68,21 @@ const deleteUser = async (req, res) => {
     }
 }
 
+const findSingleUser = async (userId) => {
+    try {
+        const tempUser = await userRepository.findSingle(userId);
+        return tempUser
+    } catch (error) {
+        console.log(error);
+        return error;
+    }
+}
+
 module.exports = {
     getAllUsers,
     getSingleUser,
     updateUser,
     deleteUser,
+
+    findSingleUser
 }
