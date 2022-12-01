@@ -68,6 +68,11 @@ const deleteUser = async (req, res) => {
     }
 }
 
+/**
+ * find user by Id
+ * @param {string} userId 
+ * @returns {Promise<Object>}
+ */
 const findSingleUser = async (userId) => {
     try {
         const tempUser = await userRepository.findSingle(userId);

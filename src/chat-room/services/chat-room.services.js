@@ -1,8 +1,13 @@
+const { createNewMessage } = require("../../message/services/message.service");
 const ChatRoom = require("../entities/chat-room")
 const { chatRoomMemberRepository } = require("../repositories/chat-room-member.repository");
 const { chatRoomRepository } = require("../repositories/chat-room.repository");
 
-
+/**
+ * return all chatrooms
+ * @param {*} req 
+ * @param {*} res 
+ */
 const getAllChatrooms = async (req, res) => {
     try {
         const chatrooms = await chatRoomRepository.getAll();
@@ -12,6 +17,10 @@ const getAllChatrooms = async (req, res) => {
     }
 }
 
+/**
+ * @param {*} req 
+ * @param {*} res 
+ */
 const getChatRoom = async (req, res) => {
     try {
         const chatroom = await chatRoomRepository.findSingle(req.params._id);
@@ -21,6 +30,10 @@ const getChatRoom = async (req, res) => {
     }
 }
 
+/**
+ * @param {*} req 
+ * @param {*} res 
+ */
 const createNewChatRoom = async (req, res) => {
     const newChatRoom = new ChatRoom(req.body);
     try {
@@ -31,6 +44,12 @@ const createNewChatRoom = async (req, res) => {
     }
 }
 
+/**
+ * send a new message to chatroom
+ * @param {string} chatRoomId 
+ * @param {Object} dataCreateMessage
+ * @return {Promise<Object>} 
+ */
 const sendNewMessageToChatRoom = async (chatRoomId, dataCreateMessage) => {
     const currentChatRoom = await chatRoomRepository.findChatRoomById(chatRoomId);
     const newMessage = await createNewMessage(dataCreateMessage); // modify if have chance messages from client
@@ -41,6 +60,11 @@ const sendNewMessageToChatRoom = async (chatRoomId, dataCreateMessage) => {
     }
 }
 
+/**
+ * return all members in chat room 
+ * @param {string} chatRoomId 
+ * @returns {Array}
+ */
 const findAllMembersInChatRoom = async (chatRoomId) => {
     try {
         const currentChatRoom = await chatRoomRepository.findSingle(chatRoomId);
@@ -54,6 +78,11 @@ const findAllMembersInChatRoom = async (chatRoomId) => {
     }
 }
 
+/**
+ * return all messages in chatroom 
+ * @param {string} chatRoomId 
+ * @returns {Array}
+ */
 const findAllMessagesInChatRoom = async (chatRoomId) => {
     try {
         const currentChatRoom = await chatRoomRepository.findSingle(chatRoomId);

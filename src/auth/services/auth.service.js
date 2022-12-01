@@ -2,7 +2,10 @@ const User = require("../../user/entities/user");
 const { userRepository } = require("../../user/repositories/user.repository");
 const { authRepository } = require("../repositories/auth.repository");
 
-
+/**
+ * @param {*} req 
+ * @param {*} res 
+ */
 const registerUser = async (req, res) => {
     try {
         // to-do: generate and hash password before saving to database
@@ -24,9 +27,13 @@ const registerUser = async (req, res) => {
     }
 }
 
+/**
+ * @param {*} req 
+ * @param {*} res 
+ */
 const loginUser = async (req, res) => {
     try {
-        //to do: encrypt password to compare, dont rcm using raw password  
+        //to do: encrypt password to compare, don't rcm using raw password  
         const user = await userRepository.findUserByEmail(req.body.email);
         if (!user)
             res.status(404).json("User not found");
@@ -38,6 +45,14 @@ const loginUser = async (req, res) => {
         }
     } catch (error) {
         res.status(500).json(error)
+    }
+}
+
+const logoutUser = async (req, res) => {
+    try {
+
+    } catch (error) {
+
     }
 }
 
