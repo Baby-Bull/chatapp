@@ -12,7 +12,6 @@ export const authorize = (allowedAccessTypes) => async (req, res, next) => {
     try {
         let jwt = req.headers.authorization;
 
-        // verify request has token
         if (!jwt) {
             return res.status(401).json({ message: 'Invalid token ' });
         }
@@ -24,15 +23,12 @@ export const authorize = (allowedAccessTypes) => async (req, res, next) => {
 
         // verify token hasn't expired yet
         const decodedToken = await validateToken(jwt);
-
         const hasAccessToEndpoint = allowedAccessTypes.some(
             (at) => decodedToken.accessTypes.some((uat) => uat === at)
         );
-
         if (!hasAccessToEndpoint) {
             return res.status(401).json({ message: 'No enough privileges to access endpoint' });
         }
-
         next();
     } catch (error) {
         if (error.name === 'TokenExpiredError') {
