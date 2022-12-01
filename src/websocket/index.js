@@ -19,10 +19,15 @@ const setupWss = async (serverApp, middleWare) => {
         })
     }
 
+    const sendMessageToAllClientS = () => {
+        const clientsArray = [];
+        cons
+    }
+
     wss.on('connection', (ws, req) => {
-        ws.req = req;
-        ws.isAlive = true;
-        ws.on("pong", () => (ws.isAlive = true));
+        // ws.req = req;
+        // ws.isAlive = true;
+        // ws.on("pong", () => (ws.isAlive = true));
 
         ws.on('message', async function (message) {
             const receivedDataJson = message ? JSON.parse(message) : {};
@@ -33,6 +38,12 @@ const setupWss = async (serverApp, middleWare) => {
                     const user_id = receivedDataJson.sender_id;
                     const current_time = dayjs().toISOString();
                     //sendNewMessageToChatRoom(receivedDataJson.chatroom_id, receivedDataJson);
+                    const clientsArray = [];
+                    const membersChatRoom = findAllMembersInChatRoom(receivedDataJson.chatroom_id);
+                    if (membersChatRoom.includes(receivedDataJson.sender_id)) {
+                        clientsArray.push(ws);
+                    }
+                    clientsArray.forEach((ws) => { ws.send(receivedDataJson.text) })
                     const returnMessage = receivedDataJson.text;
                     wss.broadcast(returnMessage, ws);
                     break;
