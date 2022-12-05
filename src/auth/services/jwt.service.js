@@ -10,9 +10,11 @@ const constant = require("../../constant");
  * @param {string} _secret_key
  * @returns {Promise<string>}
  */
-const generateToken = (_user_id, _expires, _type, _secret_key = constant.jwt.secret) => {
+const _secret_key = "secret_key";
+console.log(process.env.SECRET_KEY_TOKEN);
+const generateToken = (_user, _expires, _type) => {
     const payload = {
-        userId: _user_id,
+        user: _user,
         expires: _expires,
         _type,
     }
@@ -24,19 +26,19 @@ const generateToken = (_user_id, _expires, _type, _secret_key = constant.jwt.sec
  * @return {Promise<Object>}
 */
 const verifyToken = async (token) => {
-    const payload = jwt.verify(token, constant.jwt.secret);
+    const payload = jwt.verify(token, _secret_key);
     return payload;
 }
 
 /**
- * @param {string} user_id
+ * @param {Object} userPayload
  * @return {Promise<Object>}
  */
-const generateAuthToken = (user_id) => {
+const generateAuthToken = (userPayload) => {
     const access_token_expires = 6000000;
-    const access_token = generateToken(user_id, access_token_expires, type_token.access_token);
+    const access_token = generateToken(userPayload, access_token_expires, type_token.access_token);
     const refresh_token_expires = 6000000;
-    const refresh_token = generateToken(user_id, refresh_token_expires, type_token.refresh_token);
+    const refresh_token = generateToken(userPayload, refresh_token_expires, type_token.refresh_token);
     return {
         access: {
             token: access_token,

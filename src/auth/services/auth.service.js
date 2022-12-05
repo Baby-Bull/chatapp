@@ -1,6 +1,7 @@
 const User = require("../../user/entities/user");
 const { userRepository } = require("../../user/repositories/user.repository");
 const { authRepository } = require("../repositories/auth.repository");
+const { generateAuthToken } = require("./jwt.service");
 
 /**
  * @param {*} req 
@@ -38,10 +39,16 @@ const loginUser = async (req, res) => {
         if (!user)
             res.status(404).json("User not found");
         else {
-            if (user.password === req.body.password)
-                res.status(200).json(user);
-            else
-                res.status(401).json("Wrong password.")
+            try {
+                if (user.password === req.body.password) {
+                    const tokenRes = generateAuthToken(user);
+                    res.status(200).json({ auth: true, user, token: tokenRes });
+                }
+                else
+                    res.status(401).json("Wrong password.")
+            } catch (error) {
+                console.log(error);
+            }
         }
     } catch (error) {
         res.status(500).json(error)
@@ -50,7 +57,11 @@ const loginUser = async (req, res) => {
 
 const logoutUser = async (req, res) => {
     try {
-
+        res.status(200).json({
+            auth: false,
+            token: null,
+            message: "logout successful"
+        })
     } catch (error) {
 
     }

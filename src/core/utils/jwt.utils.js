@@ -1,5 +1,24 @@
-import { Request, Response, NextFunction } from 'express';
-import { validateToken } from './../utils/jwt.utils';
+const jwt = require('jsonwebtoken');
+
+/**
+ * validate token received from header request - client,
+ * @param {string} token 
+ * @returns {Promise}
+ */
+const validateToken = (token) => {
+    const publicKey = "secret_key";
+    const verifyOptions = {
+        algorithms: ['RS256'],
+    };
+    return new Promise((resolve, reject) => {
+        jwt.verify(token, publicKey, function (error, decoded) {
+            if (error)
+                return reject(error);
+            resolve(decoded);
+        })
+    })
+}
+
 
 /**
  * middleware to check whether user has access to a specific endpoint
@@ -8,21 +27,24 @@ import { validateToken } from './../utils/jwt.utils';
  */
 
 // to-do edit this file to validate all the api from the server  
-export const authorize = (allowedAccessTypes) => async (req, res, next) => {
+const authorize = (allowedAccessTypes) => async (req, res, next) => {
     try {
-        let jwt = req.headers.authorization;
+        let headerJwt = req.headers.authorization;
 
-        if (!jwt) {
+        if (!headerJwt) {
             return res.status(401).json({ message: 'Invalid token ' });
         }
 
         // remove Bearer if using Bearer Authorization mechanism
-        if (jwt.toLowerCase().startsWith('bearer')) {
-            jwt = jwt.slice('bearer'.length).trim();
+        if (headerJwt.toLowerCase().startsWith('bearer')) {
+            headerJwt = headerJwt.slice('bearer'.length).trim();
         }
 
         // verify token hasn't expired yet
-        const decodedToken = await validateToken(jwt);
+        const dataVerify = await validateToken(headerJwt);
+        //const decodedToken = await validateToken(headerJwt);
+        console.log(dataVerify);
+
         const hasAccessToEndpoint = allowedAccessTypes.some(
             (at) => decodedToken.accessTypes.some((uat) => uat === at)
         );
@@ -38,4 +60,9 @@ export const authorize = (allowedAccessTypes) => async (req, res, next) => {
 
         res.status(500).json({ message: 'Failed to authenticate user' });
     }
+};
+
+module.exports = {
+    authorize,
+    validateToken
 };
