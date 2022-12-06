@@ -19,12 +19,15 @@ const registerUser = async (req, res) => {
         try {
             const savedUser = await authRepository.saveObject(newUser);
             res.status(200).json(savedUser);
+            return savedUser;
         } catch (error) {
             res.status(500).json(error)
             console.log(error);
+            return null;
         }
     } catch (error) {
         res.status(500).json(error);
+        return null;
     }
 }
 
@@ -69,5 +72,6 @@ const logoutUser = async (req, res) => {
 
 module.exports = {
     registerUser,
-    loginUser
+    loginUser,
+    logoutUser
 }

@@ -10,10 +10,13 @@ const { messageRepository } = require("../repositories/message.repository");
 const createNewMessage = async (dataCreateMessage) => {
     const newMessage = new Message(dataCreateMessage);
     try {
-        await messageRepository.saveObject(newMessage);
+        const new_Mess = await messageRepository.saveObject(newMessage);
+        return new_Mess;
         //res.status(200).json(savedMessage);
     } catch (error) {
         //res.status(500).json(error)
+        console.log(error);
+        return null
     }
 }
 
@@ -24,13 +27,32 @@ const createNewMessage = async (dataCreateMessage) => {
  */
 const getAllMessages = async (req, res) => {
     try {
-        const messages = await messageRepository.getAll();
+        let messages;
+        if (req.body.chatroom_id) {
+            messages = await messageRepository.findAllMessagesByChatroom(req.body.chatroom_id);
+        }
+        else
+            messages = await messageRepository.getAll();
         res.status(200).json(messages);
+        return messages;
     } catch (error) {
         res.status(500).json(error);
+        return null;
     }
 }
+
+// const getAllMessagesByChatroom = (req, res) => {
+//     try {
+//         const allMessChatroom = messageRepository.findAllMessagesByChatroom(req.body.chatroom_id);
+//         res.status(200).json(allMessChatroom);
+//         return allMessChatroom;
+//     } catch (error) {
+//         console.log(error);
+//         return null;
+//     }
+// }
 module.exports = {
     createNewMessage,
-    getAllMessages
+    getAllMessages,
+    //getAllMessagesByChatroom,
 }

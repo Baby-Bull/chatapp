@@ -32,23 +32,34 @@ const setupWss = async (serverApp, middleWare) => {
      */
     const sendMessageToAllClients = async (_chatroom_id, _content_message, _time, _sender_id) => {
         const membersChatRoom = await findAllMembersInChatRoom(_chatroom_id);
-        arrayWss.filter((_wssItem) => (
-            membersChatRoom?.includes(_wssItem?._user_id)
-        )).forEach((_item) => {
-            if (_item?._user_id !== _sender_id) {
-                _item?._ws.send(JSON.stringify({
-                    type: "chat_message_received",
-                    content: _content_message,
-                    time: _time,
-                }));
-            }
+
+        arrayWss.forEach((_item) => {
+            //if (_item?._user_id !== _sender_id) {
+            _item?._ws.send(JSON.stringify({
+                type: "chat_message_received",
+                content: _content_message,
+                time: _time,
+            }));
+            //}
         })
+
+        // arrayWss.filter((_wssItem) => (
+        //     membersChatRoom?.includes(_wssItem?._user_id)
+        // )).forEach((_item) => {
+        //     //if (_item?._user_id !== _sender_id) {
+        //     _item?._ws.send(JSON.stringify({
+        //         type: "chat_message_received",
+        //         content: _content_message,
+        //         time: _time,
+        //     }));
+        //     //}
+        // })
     }
 
     wss.on('connection', (ws, req) => {
         ws.on('message', async function (message) {
             const receivedDataJson = message ? JSON.parse(message) : {};
-            const typeOfMessage = receivedDataJson.content_type  // set type of message that be received from client.
+            const typeOfMessage = receivedDataJson.message_type  // set type of message that be received from client.
             console.log(receivedDataJson);
 
             switch (typeOfMessage) {
@@ -58,6 +69,7 @@ const setupWss = async (serverApp, middleWare) => {
                         _user_id: receivedDataJson?.user_connecting_id,
                     }
                     arrayWss.push(ObjectMatchWs);
+                    break;
 
                 case "chat_message_personal_sent":
                     await sendMessageToAllClients(receivedDataJson.chatroom_id, receivedDataJson.content_message, receivedDataJson.time, receivedDataJson.sender_id);

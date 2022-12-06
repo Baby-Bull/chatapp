@@ -1,6 +1,6 @@
 module.exports = {
-    jwt: {
-        secret: process.env.SECRET_KEY_TOKEN,
+    jwt_constant: {
+        secret: "key_token",
     },
     type_token: {
         access_token: "access",

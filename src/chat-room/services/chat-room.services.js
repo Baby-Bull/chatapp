@@ -54,7 +54,7 @@ const sendNewMessageToChatRoom = async (chatRoomId, dataCreateMessage) => {
     const currentChatRoom = await chatRoomRepository.findChatRoomById(chatRoomId);
     const newMessage = await createNewMessage(dataCreateMessage); // modify if have chance messages from client
     try {
-        await currentChatRoom.updateOne({ $push: { messages: newMessage } })
+        newMessage && await currentChatRoom.updateOne({ $push: { messages: newMessage } })
     } catch (error) {
         console.log(error);
     }
@@ -89,6 +89,7 @@ const findAllMessagesInChatRoom = async (chatRoomId) => {
         return currentChatRoom.messages || [];
     } catch (error) {
         console.log(error);
+        return null;
     }
 }
 

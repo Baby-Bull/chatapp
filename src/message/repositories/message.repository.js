@@ -5,6 +5,9 @@ class MessageRepository extends BaseRepository {
     constructor(entity) {
         super(entity);
     }
+    async findAllMessagesByChatroom(chatroom_id) {
+        return this.findManyByOption({ chatroom_id: chatroom_id })
+    }
 }
 
 module.exports = {

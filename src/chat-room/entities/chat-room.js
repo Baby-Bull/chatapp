@@ -7,11 +7,6 @@ const ChatRoomTypeEnum = {
 
 const ChatRoomSchema = new mongoose.Schema(
     {
-        id: {
-            type: String,
-            required: true,
-            generate: true,
-        },
         type: {
             type: String,
             enum: ChatRoomTypeEnum,

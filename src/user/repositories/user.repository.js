@@ -7,7 +7,7 @@ class UserRepository extends BaseRepository {
     }
 
     async findUserByEmail(email) {
-        return this.findByOption({ "email": email });
+        return this.findOneByOption({ "email": email });
     }
 }
 

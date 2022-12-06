@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const { type_token } = require("../../constant");
-const constant = require("../../constant");
+const { jwt_constant } = require("../../constant");
 /**
  * generate new token
  * @param {string} _option
@@ -10,8 +10,7 @@ const constant = require("../../constant");
  * @param {string} _secret_key
  * @returns {Promise<string>}
  */
-const _secret_key = "secret_key";
-console.log(process.env.SECRET_KEY_TOKEN);
+const _secret_key = jwt_constant.secret;
 const generateToken = (_user, _expires, _type) => {
     const payload = {
         user: _user,

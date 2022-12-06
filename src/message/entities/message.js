@@ -9,11 +9,6 @@ const MessageTypeEnum = {
 
 const MessageSchema = new mongoose.Schema(
     {
-        id: {
-            type: String,
-            required: true,
-            generate: true,
-        },
         content: {
             type: String,
             default: ""
@@ -23,7 +18,7 @@ const MessageSchema = new mongoose.Schema(
             enum: MessageTypeEnum,
             default: MessageTypeEnum.Text
         },
-        chatRoom_id: {
+        chatroom_id: {
             type: String,
             required: true
         },
