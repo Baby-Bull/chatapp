@@ -1,3 +1,4 @@
+const { uploadFile } = require("../../core/middlewares/multer.middleware");
 const { createNewMessage } = require("../../message/services/message.service");
 const ChatRoom = require("../entities/chat-room")
 const { chatRoomMemberRepository } = require("../repositories/chat-room-member.repository");
@@ -45,22 +46,6 @@ const createNewChatRoom = async (req, res) => {
 }
 
 /**
- * send a new message to chatroom
- * @param {string} chatRoomId 
- * @param {Object} dataCreateMessage
- * @return {Promise<Object>} 
- */
-const sendNewMessageToChatRoom = async (chatRoomId, dataCreateMessage) => {
-    const currentChatRoom = await chatRoomRepository.findChatRoomById(chatRoomId);
-    const newMessage = await createNewMessage(dataCreateMessage); // modify if have chance messages from client
-    try {
-        newMessage && await currentChatRoom.updateOne({ $push: { messages: newMessage } })
-    } catch (error) {
-        console.log(error);
-    }
-}
-
-/**
  * return all members in chat room 
  * @param {string} chatRoomId 
  * @returns {Array}
@@ -93,6 +78,32 @@ const findAllMessagesInChatRoom = async (chatRoomId) => {
     }
 }
 
+/**
+ * send a new message to chatroom
+ * @param {string} chatRoomId 
+ * @param {Object} dataCreateMessage
+ * @return {Promise<Object>} 
+ */
+const sendNewMessageToChatRoom = async (chatRoomId, dataCreateMessage) => {
+    const currentChatRoom = await chatRoomRepository.findChatRoomById(chatRoomId);
+    const newMessage = await createNewMessage(dataCreateMessage); // modify if have chance messages from client
+    try {
+        newMessage && await currentChatRoom.updateOne({ $push: { messages: newMessage } })
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
+//*pending
+const sendMessageAsFile = async (chatRoomId, dataCreateMessage) => {
+    try {
+        uploadFile.any("file");
+    } catch (error) {
+        console.log(error);
+        return;
+    }
+}
 
 module.exports = {
     getAllChatrooms,
@@ -105,4 +116,5 @@ module.exports = {
 
     //using websocket *functions*****************
     sendNewMessageToChatRoom,
+    sendMessageAsFile
 }

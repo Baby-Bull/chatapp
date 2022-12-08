@@ -1,25 +1,6 @@
 const Message = require("../entities/message");
 const { messageRepository } = require("../repositories/message.repository");
 
-
-/**
- * create a new Message in database
- * @param {Object} dataCreateMessage 
- * @returns {Promise}
- */
-const createNewMessage = async (dataCreateMessage) => {
-    const newMessage = new Message(dataCreateMessage);
-    try {
-        const new_Mess = await messageRepository.saveObject(newMessage);
-        return new_Mess;
-        //res.status(200).json(savedMessage);
-    } catch (error) {
-        //res.status(500).json(error)
-        console.log(error);
-        return null
-    }
-}
-
 /**
  * return all messages in chatroom
  * @param {*} req 
@@ -41,6 +22,40 @@ const getAllMessages = async (req, res) => {
     }
 }
 
+/**
+ * create a new Message in database
+ * @param {Object} dataCreateMessage 
+ * @returns {Promise}
+ */
+const createNewMessage = async (dataCreateMessage) => {
+    const newMessage = new Message(dataCreateMessage);
+    try {
+        const new_Mess = await messageRepository.saveObject(newMessage);
+        return new_Mess;
+        //res.status(200).json(savedMessage);
+    } catch (error) {
+        //res.status(500).json(error)
+        console.log(error);
+        return null
+    }
+}
+
+/**
+ * create message with file format
+ * @param {*} dataCreateMessageAsFile 
+ * @returns {Promise<Message>}
+ */
+const createNewMessageAsFile = async (dataCreateMessageAsFile) => {
+    const newMessageAsFile = new Message(dataCreateMessageAsFile);
+    try {
+        const new_Message_File = await messageRepository.saveObject(newMessageAsFile);
+        return new_Message_File;
+    } catch (error) {
+        console.log(error);
+        return null;
+    }
+}
+
 // const getAllMessagesByChatroom = (req, res) => {
 //     try {
 //         const allMessChatroom = messageRepository.findAllMessagesByChatroom(req.body.chatroom_id);
@@ -53,6 +68,7 @@ const getAllMessages = async (req, res) => {
 // }
 module.exports = {
     createNewMessage,
+    createNewMessageAsFile,
     getAllMessages,
     //getAllMessagesByChatroom,
 }

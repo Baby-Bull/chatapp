@@ -7,7 +7,6 @@ const {
 const { findSingleUser } = require('../user/services/user.service');
 const { createNewMessage } = require('../message/services/message.service');
 const chatRoomRepository = require('../chat-room/repositories/chat-room.repository');
-const { find } = require('../message/entities/message');
 
 const arrayWss = [];
 const setupWss = async (serverApp, middleWare) => {
@@ -32,28 +31,17 @@ const setupWss = async (serverApp, middleWare) => {
      */
     const sendMessageToAllClients = async (_chatroom_id, _content_message, _time, _sender_id) => {
         const membersChatRoom = await findAllMembersInChatRoom(_chatroom_id);
-
-        arrayWss.forEach((_item) => {
-            //if (_item?._user_id !== _sender_id) {
-            _item?._ws.send(JSON.stringify({
-                type: "chat_message_received",
-                content: _content_message,
-                time: _time,
-            }));
-            //}
+        arrayWss.filter((_wssItem) => (
+            membersChatRoom?.includes(_wssItem?._user_id)
+        )).forEach((_item) => {
+            if (_item?._user_id !== _sender_id) {
+                _item?._ws.send(JSON.stringify({
+                    type: "chat_message_received",
+                    content: _content_message,
+                    time: _time,
+                }));
+            }
         })
-
-        // arrayWss.filter((_wssItem) => (
-        //     membersChatRoom?.includes(_wssItem?._user_id)
-        // )).forEach((_item) => {
-        //     //if (_item?._user_id !== _sender_id) {
-        //     _item?._ws.send(JSON.stringify({
-        //         type: "chat_message_received",
-        //         content: _content_message,
-        //         time: _time,
-        //     }));
-        //     //}
-        // })
     }
 
     wss.on('connection', (ws, req) => {
@@ -89,6 +77,12 @@ const setupWss = async (serverApp, middleWare) => {
                         chatroom_id: receivedDataJson.chatroom_id,
                         sender_id: receivedDataJson.sender_id
                     })
+                    break;
+
+                case "call":
+                    break;
+
+                case "incomingCallResponse":
                     break;
 
                 case "userLastSeenAt":
