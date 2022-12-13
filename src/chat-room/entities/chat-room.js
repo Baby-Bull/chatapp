@@ -11,15 +11,21 @@ const ChatRoomSchema = new mongoose.Schema(
             type: String,
             enum: ChatRoomTypeEnum,
             required: true,
-            //default: ChatRoomTypeEnum.Personal,
+            default: ChatRoomTypeEnum.Personal,
+        },
+        chatroom_title: {
+            type: String,
+        },
+        profile_picture: {
+            type: String,
         },
         members: {
             type: Array,
             default: []
         },
-        messages: {
-            type: Array,
-            default: []
+        lastest_message: {
+            type: String,
+            default: "Chatroom has been created"
         }
     }, { timestamp: true }
 );

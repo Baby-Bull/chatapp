@@ -20,6 +20,8 @@ var allowCrossDomain = function (req, res, next) {
     next();
 }
 app.use(express.json());
+app.options('*', cors());
+app.use(cors());
 app.use(allowCrossDomain);
 
 // using routers
