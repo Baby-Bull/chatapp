@@ -45,6 +45,7 @@ const loginUser = async (req, res) => {
             try {
                 if (user.password === req.body.password) {
                     const tokenRes = generateAuthToken(user);
+                    res.cookie('token', tokenRes, { httpOnly: true });
                     res.status(200).json({ auth: true, user, token: tokenRes });
                 }
                 else

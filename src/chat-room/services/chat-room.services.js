@@ -32,6 +32,21 @@ const getChatRoom = async (req, res) => {
 }
 
 /**
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ */
+const getChatRoomByUserId = async (req, res) => {
+    try {
+        const chatRooms = await chatRoomRepository.findChatRoomByUserId(req.body.user_id);
+        res.status(200).json(chatRooms);
+    } catch (error) {
+        res.status(500).json(error);
+    }
+}
+
+
+/**
  * @param {*} req 
  * @param {*} res 
  */
@@ -108,6 +123,7 @@ const sendMessageAsFile = async (chatRoomId, dataCreateMessage) => {
 module.exports = {
     getAllChatrooms,
     getChatRoom,
+    getChatRoomByUserId,
     createNewChatRoom,
 
     //do not use request and response  ******
