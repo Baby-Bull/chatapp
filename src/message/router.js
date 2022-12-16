@@ -6,7 +6,7 @@ const {
 const router = require("express").Router();
 
 router.post("/", createNewMessage);
-router.get("/", getAllMessages);
+router.get("/:_id", getAllMessages);
 
 module.exports = {
     path: "/messages",

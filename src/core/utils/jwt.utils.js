@@ -40,7 +40,9 @@ const authorize = (allowedAccessTypes) => async (req, res, next) => {
 
         // verify token hasn't expired yet
         const dataVerify = await validateToken(headerJwt);
-        
+        //console.log(dataVerify);
+        // ************ to-do checking user exist, maxAge token, ...
+
         next();
     } catch (error) {
         if (error.name === 'TokenExpiredError') {

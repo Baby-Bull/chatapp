@@ -14,7 +14,6 @@ class ChatRoomRepository extends BaseRepository {
         const resChatrooms = allChatroooms.filter((chatroom) =>
             chatroom?.members?.some(el => el?._id === user_id));
         return resChatrooms;
-        return "resChatrooms";
     }
 }
 

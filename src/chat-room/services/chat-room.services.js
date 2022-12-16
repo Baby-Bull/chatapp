@@ -38,7 +38,7 @@ const getChatRoom = async (req, res) => {
  */
 const getChatRoomByUserId = async (req, res) => {
     try {
-        const chatRooms = await chatRoomRepository.findChatRoomByUserId(req.body.user_id);
+        const chatRooms = await chatRoomRepository.findChatRoomByUserId(req.params._id);
         res.status(200).json(chatRooms);
     } catch (error) {
         res.status(500).json(error);
@@ -101,6 +101,7 @@ const findAllMessagesInChatRoom = async (chatRoomId) => {
  */
 const sendNewMessageToChatRoom = async (chatRoomId, dataCreateMessage) => {
     const currentChatRoom = await chatRoomRepository.findChatRoomById(chatRoomId);
+    console.log(dataCreateMessage);
     const newMessage = await createNewMessage(dataCreateMessage); // modify if have chance messages from client
     try {
         newMessage && await currentChatRoom.updateOne({ $push: { messages: newMessage } })
