@@ -23,17 +23,12 @@ const getAllMessages = async (req, res) => {
 }
 
 /**
- * create a new Message in database
+ * create a new Message in database only use in postman/ in order to determine API survival 
  * @param {Object} dataCreateMessage 
  * @returns {Promise}
  */
-const createNewMessage = async (dataCreateMessage, res) => {
-    let newMessage;
-    if (dataCreateMessage?.body) {
-        newMessage = new Message(dataCreateMessage?.body);
-    } else {
-        newMessage = new Message(dataCreateMessage);
-    }
+const createNewMessage = async (req, res) => {
+    const newMessage = new Message(req.body);
     try {
         const new_Mess = await messageRepository.saveObject(newMessage);
         res.status(200).json(new_Mess);
@@ -61,16 +56,6 @@ const createNewMessageAsFile = async (dataCreateMessageAsFile) => {
     }
 }
 
-// const getAllMessagesByChatroom = (req, res) => {
-//     try {
-//         const allMessChatroom = messageRepository.findAllMessagesByChatroom(req.body.chatroom_id);
-//         res.status(200).json(allMessChatroom);
-//         return allMessChatroom;
-//     } catch (error) {
-//         console.log(error);
-//         return null;
-//     }
-// }
 module.exports = {
     createNewMessage,
     createNewMessageAsFile,

@@ -4,9 +4,6 @@ const {
     findAllMembersInChatRoom,
     sendNewMessageToChatRoom
 } = require("../chat-room/services/chat-room.services");
-const { findSingleUser } = require('../user/services/user.service');
-const { createNewMessage } = require('../message/services/message.service');
-const chatRoomRepository = require('../chat-room/repositories/chat-room.repository');
 
 const arrayWss = [];
 const setupWss = async (serverApp, middleWare) => {
@@ -31,12 +28,16 @@ const setupWss = async (serverApp, middleWare) => {
      */
     const sendMessageToAllClients = async (_chatroom_id, _content_message, _time, _sender_id) => {
         const membersChatRoom = await findAllMembersInChatRoom(_chatroom_id);
+        let arrayIds = membersChatRoom.map(el => el._id);
+        let arrayWsIds = arrayWss.map(el => el._user_id);
+        console.log(arrayIds);
+        console.log(arrayWsIds);
         arrayWss.filter((_wssItem) => (
-            membersChatRoom?.includes(_wssItem?._user_id)
+            arrayIds?.includes(_wssItem?._user_id)
         )).forEach((_item) => {
             if (_item?._user_id !== _sender_id) {
                 _item?._ws.send(JSON.stringify({
-                    type: "chat_message_received",
+                    message_type: "personal_message_from_server",
                     content: _content_message,
                     time: _time,
                 }));
@@ -48,7 +49,7 @@ const setupWss = async (serverApp, middleWare) => {
         ws.on('message', async function (message) {
             const receivedDataJson = message ? JSON.parse(message) : {};
             const typeOfMessage = receivedDataJson.message_type  // set type of message that be received from client.
-            console.log(receivedDataJson);
+            // console.log(receivedDataJson);
 
             switch (typeOfMessage) {
                 case "connected":
@@ -59,24 +60,38 @@ const setupWss = async (serverApp, middleWare) => {
                     arrayWss.push(ObjectMatchWs);
                     break;
 
-                case "chat_message_personal_sent":
-                    await sendMessageToAllClients(receivedDataJson.chatroom_id, receivedDataJson.content_message, receivedDataJson.time, receivedDataJson.sender_id);
-                    await sendNewMessageToChatRoom(receivedDataJson.chatroom_id, {
-                        content: receivedDataJson.content_message,
-                        content_type: receivedDataJson.content_type,
-                        chatroom_id: receivedDataJson.chatroom_id,
-                        sender_id: receivedDataJson.sender_id
-                    })
+                case "personal_message_from_client":
+                    await sendMessageToAllClients(
+                        receivedDataJson.chatroom_id,
+                        receivedDataJson.content,
+                        receivedDataJson?.time,
+                        receivedDataJson.sender_id
+                    );
+                    await sendNewMessageToChatRoom(
+                        receivedDataJson.chatroom_id,
+                        {
+                            content: receivedDataJson.content,
+                            content_type: receivedDataJson.content_type,
+                            chatroom_id: receivedDataJson.chatroom_id,
+                            sender_id: receivedDataJson.sender_id
+                        })
                     break;
 
                 case "chat_message_community_sent":
-                    await sendMessageToAllClients(receivedDataJson.chatroom_id, receivedDataJson.content_message, receivedDataJson.time, receivedDataJson.sender_id);
-                    await sendNewMessageToChatRoom(receivedDataJson.chatroom_id, {
-                        content: receivedDataJson.content_message,
-                        content_type: receivedDataJson.content_type,
-                        chatroom_id: receivedDataJson.chatroom_id,
-                        sender_id: receivedDataJson.sender_id
-                    })
+                    await sendMessageToAllClients(
+                        receivedDataJson.chatroom_id,
+                        receivedDataJson.content_message,
+                        receivedDataJson.time,
+                        receivedDataJson.sender_id
+                    );
+                    await sendNewMessageToChatRoom(
+                        receivedDataJson.chatroom_id,
+                        {
+                            content: receivedDataJson.content,
+                            content_type: receivedDataJson.content_type,
+                            chatroom_id: receivedDataJson.chatroom_id,
+                            sender_id: receivedDataJson.sender_id
+                        })
                     break;
 
                 case "call":
