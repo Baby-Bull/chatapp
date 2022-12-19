@@ -4,8 +4,9 @@ const {
     findAllMembersInChatRoom,
     sendNewMessageToChatRoom
 } = require("../chat-room/services/chat-room.services");
+const { verifyToken } = require('../auth/services/jwt.service');
 
-const arrayWss = [];
+let arrayWss = [];
 const setupWss = async (serverApp, middleWare) => {
     const wss = new WebSocket.Server({
         port: process.env.PORT_WEBSOCKET || 8080
@@ -26,20 +27,21 @@ const setupWss = async (serverApp, middleWare) => {
      * @param {string} _time 
      * @param {string} _sender_id 
      */
-    const sendMessageToAllClients = async (_chatroom_id, _content_message, _time, _sender_id) => {
+    const sendMessageToAllClients = async (_chatroom_id, _content_type, _content_message, _createdAt, _sender_id) => {
         const membersChatRoom = await findAllMembersInChatRoom(_chatroom_id);
         let arrayIds = membersChatRoom.map(el => el._id);
-        let arrayWsIds = arrayWss.map(el => el._user_id);
-        console.log(arrayIds);
-        console.log(arrayWsIds);
         arrayWss.filter((_wssItem) => (
             arrayIds?.includes(_wssItem?._user_id)
         )).forEach((_item) => {
             if (_item?._user_id !== _sender_id) {
                 _item?._ws.send(JSON.stringify({
-                    message_type: "personal_message_from_server",
-                    content: _content_message,
-                    time: _time,
+                    "personal_message_from_server": {
+                        sender_id: _sender_id,
+                        content_type: _content_type,
+                        chatroom_id: _chatroom_id,
+                        content: _content_message,
+                        createdAt: _createdAt
+                    }
                 }));
             }
         })
@@ -53,28 +55,36 @@ const setupWss = async (serverApp, middleWare) => {
 
             switch (typeOfMessage) {
                 case "connected":
+                    const connecting_user = await verifyToken(receivedDataJson?.user_connecting_id)
                     const ObjectMatchWs = {
                         _ws: ws,
-                        _user_id: receivedDataJson?.user_connecting_id,
+                        _user_id: connecting_user?.user?._id,
                     }
+                    arrayWss = arrayWss.filter(el => el?._user_id !== connecting_user?.user?._user_id);
                     arrayWss.push(ObjectMatchWs);
                     break;
 
+                case "disconnected":
+                    arrayWss = arrayWss.filter(el => el?._user_id !== connecting_user?.user?._user_id);
+                    break;
+
                 case "personal_message_from_client":
-                    await sendMessageToAllClients(
-                        receivedDataJson.chatroom_id,
-                        receivedDataJson.content,
-                        receivedDataJson?.time,
-                        receivedDataJson.sender_id
-                    );
-                    await sendNewMessageToChatRoom(
+                    const sentMessage = await sendNewMessageToChatRoom(
                         receivedDataJson.chatroom_id,
                         {
                             content: receivedDataJson.content,
                             content_type: receivedDataJson.content_type,
                             chatroom_id: receivedDataJson.chatroom_id,
                             sender_id: receivedDataJson.sender_id
-                        })
+                        });
+                    console.log(sentMessage);
+                    await sendMessageToAllClients(
+                        sentMessage.chatroom_id,
+                        sentMessage?.content_type,
+                        sentMessage.content,
+                        sentMessage?.createdAt,
+                        sentMessage.sender_id
+                    );
                     break;
 
                 case "chat_message_community_sent":

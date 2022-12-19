@@ -1,5 +1,6 @@
 const { uploadFile } = require("../../core/middlewares/multer.middleware");
-const messageRepository = require("../../message/repositories/message.repository");
+const Message = require("../../message/entities/message");
+const { messageRepository } = require("../../message/repositories/message.repository");
 const { createNewMessage } = require("../../message/services/message.service");
 const ChatRoom = require("../entities/chat-room")
 const { chatRoomMemberRepository } = require("../repositories/chat-room-member.repository");
@@ -114,17 +115,16 @@ const sendNewMessageToChatRoom = async (chatRoomId, dataCreateMessage) => {
         message_type,
         ...others
     } = dataCreateMessage;
-    const currentChatRoom = await chatRoomRepository.findChatRoomById(chatRoomId);
-    //const newMessage = await (setBodyReqCrateMessage(others), createNewMessage(dataCreateMessage));
-    const newMessage = async () => {
+    try {
+        const currentChatRoom = await chatRoomRepository.findChatRoomById(chatRoomId);
         const newMessageStorage = new Message(others);
         const new_Mess = await messageRepository.saveObject(newMessageStorage);
-        return new_Mess
-    };
-    try {
-        newMessage && await currentChatRoom.updateOne({ $push: { messages: newMessage } })
+
+        new_Mess && await currentChatRoom.updateOne({ $push: { messages: new_Mess } })
+        return new_Mess;
     } catch (error) {
         console.log(error);
+        return error;
     }
 }
 
