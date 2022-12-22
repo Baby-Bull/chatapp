@@ -55,7 +55,7 @@ const setupWss = async (serverApp, middleWare) => {
 
             switch (typeOfMessage) {
                 case "connected":
-                    const connecting_user = await verifyToken(receivedDataJson?.user_connecting_id)
+                    const connecting_user = receivedDataJson?.user_connecting_id ? await verifyToken(receivedDataJson?.user_connecting_id) : "";
                     const ObjectMatchWs = {
                         _ws: ws,
                         _user_id: connecting_user?.user?._id,
