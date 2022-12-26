@@ -29,7 +29,7 @@ class BaseRepository {
     }
 
     async updateSingle(_id, entityAttrs, options = {}) {
-        return this._collection.updateOne(
+        return this._collection.findOneAndUpdate(
             { _id: _id },
             entityAttrs,
             options

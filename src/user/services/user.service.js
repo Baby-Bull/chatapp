@@ -28,20 +28,25 @@ const getSingleUser = async (req, res) => {
     }
 }
 
+/**
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ */
 const updateUser = async (req, res) => {
     try {
-        if (req.params.id === req.body.id) {
-            const updatedUser = userRepository.updateSingle(
-                req.params.id,
+        if (req.params._id === req.body.id) {
+            const updatedUser = await userRepository.updateSingle(
+                req.params._id,
                 {
-                    $set: rep.body,
+                    $set: req.body,
                 },
                 { new: true }
             );
             res.status(200).json(updatedUser)
         }
         else
-            res.status(401).json("Error permission")
+            res.status(401).json("Error permission" + req.params._id)
     } catch (error) {
         res.status(500).json(error);
     }
