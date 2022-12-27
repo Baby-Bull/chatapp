@@ -2,13 +2,23 @@ const { userRepository } = require("../repositories/user.repository");
 
 const getAllUsers = async (req, res) => {
     try {
-        let users
+        let users;
         if (req.body.email) {
             users = await userRepository.findUserByEmail(req.body.email);
         } else {
             users = await userRepository.getAll();
         }
         res.status(200).json(users);
+    } catch (error) {
+        res.status(500).json(error);
+    }
+}
+
+const getUsersByName = async (req, res) => {
+    try {
+        const allUsers = await userRepository.getAll();
+        const resUsers = allUsers.filter((user) => (user?.username && user?.username.includes(req.body.string)));
+        res.status(200).json(resUsers);
     } catch (error) {
         res.status(500).json(error);
     }
@@ -90,6 +100,7 @@ const findSingleUser = async (userId) => {
 
 module.exports = {
     getAllUsers,
+    getUsersByName,
     getSingleUser,
     updateUser,
     deleteUser,

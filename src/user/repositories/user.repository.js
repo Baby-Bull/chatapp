@@ -9,6 +9,10 @@ class UserRepository extends BaseRepository {
     async findUserByEmail(email) {
         return this.findOneByOption({ "email": email });
     }
+
+    async findUsersByName(string){
+        return this.findManyByOption()
+    }
 }
 
 module.exports = {

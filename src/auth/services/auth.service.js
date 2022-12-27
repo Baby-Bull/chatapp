@@ -16,7 +16,7 @@ const registerUser = async (req, res) => {
             password: req.body.password,
             email: req.body.email,
         })
-        try {
+        try {           
             const savedUser = await authRepository.saveObject(newUser);
             res.status(200).json(savedUser);
             return savedUser;
