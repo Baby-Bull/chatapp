@@ -78,7 +78,6 @@ const setupWss = async (serverApp, middleWare) => {
                             chatroom_id: receivedDataJson.chatroom_id,
                             sender_id: receivedDataJson.sender_id
                         });
-                    console.log(sentMessage);
                     await sendMessageToAllClients(
                         sentMessage.chatroom_id,
                         sentMessage?.content_type,
@@ -104,6 +103,9 @@ const setupWss = async (serverApp, middleWare) => {
                             sender_id: receivedDataJson.sender_id
                         })
                     break;
+
+                case "call_request_from_client":
+
 
                 case "call":
                     break;
