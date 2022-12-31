@@ -4,6 +4,7 @@ const MessageTypeEnum = {
     Text: "text",
     File: "file",
     Image: "image",
+    Audio: "audio",
     FirstMessage: ""
 };
 
