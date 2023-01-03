@@ -13,7 +13,7 @@ MongoClient.connect(url).then((client) => {
 
   // Database collection
   const collection = connect
-    .collection("messages");
+    .collection("users");
 
   // Delete multiple documents having name GFG
   collection.deleteMany();

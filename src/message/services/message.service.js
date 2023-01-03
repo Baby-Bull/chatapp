@@ -23,7 +23,7 @@ const getAllMessages = async (req, res) => {
 }
 
 /**
- * create a new Message in database only use in postman/ in order to determine API survival 
+ * create a new Message in database - only use in postman/ in order to determine API survival 
  * @param {Object} dataCreateMessage 
  * @returns {Promise}
  */
