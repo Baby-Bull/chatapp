@@ -61,7 +61,7 @@ const setupWss = async (serverApp, middleWare) => {
      * @returns {Promise} 
      */
     const sendMessageToAllClients = async (_chatroom_id, _content_type, _content_message, _createdAt, _sender_id) => {
-        const membersChatRoom = findAllMembersInChatRoom(_chatroom_id);
+        const membersChatRoom = await findAllMembersInChatRoom(_chatroom_id);
         let arrayIds = membersChatRoom.map(el => el._id);
         sendPayloadToClient(arrayIds, _sender_id, {
             "personal_message_from_server": {
@@ -131,36 +131,36 @@ const setupWss = async (serverApp, middleWare) => {
                         })
                     break;
 
-                case "call_request_from_client":
-                    await sendCommonResponseToAllClients(
-                        "call_request_from_server",
-                        receivedDataJson.chatroom_id,
-                        receivedDataJson.sender_id
-                    )
-                    break;
+                // case "call_request_from_client":
+                //     await sendCommonResponseToAllClients(
+                //         "call_request_from_server",
+                //         receivedDataJson.chatroom_id,
+                //         receivedDataJson.sender_id
+                //     )
+                //     break;
 
-                case "cancel_calling_request_from_client":
-                    await sendCommonResponseToAllClients(
-                        "cancel_call_request_from_server",
-                        receivedDataJson.chatroom_id,
-                        receivedDataJson.sender_id
-                    )
-                    break;
+                // case "cancel_calling_request_from_client":
+                //     await sendCommonResponseToAllClients(
+                //         "cancel_call_request_from_server",
+                //         receivedDataJson.chatroom_id,
+                //         receivedDataJson.sender_id
+                //     )
+                //     break;
 
-                case "reject_calling_request_from_client":
-                    await sendCommonResponseToAllClients(
-                        "reject_call_request_from_server",
-                        receivedDataJson.chatroom_id,
-                        receivedDataJson.sender_id
-                    )
-                    break;
-                case "accept_calling_request_from_client":
-                    await sendCommonResponseToAllClients(
-                        "accept_call_request_from_server",
-                        receivedDataJson.chatroom_id,
-                        receivedDataJson.sender_id
-                    )
-                    break;
+                // case "reject_calling_request_from_client":
+                //     await sendCommonResponseToAllClients(
+                //         "reject_call_request_from_server",
+                //         receivedDataJson.chatroom_id,
+                //         receivedDataJson.sender_id
+                //     )
+                //     break;
+                // case "accept_calling_request_from_client":
+                //     await sendCommonResponseToAllClients(
+                //         "accept_call_request_from_server",
+                //         receivedDataJson.chatroom_id,
+                //         receivedDataJson.sender_id
+                //     )
+                //     break;
 
                 case "userLastSeenAt":
                     break;
