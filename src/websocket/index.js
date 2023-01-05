@@ -42,7 +42,7 @@ const setupWss = async (serverApp, middleWare) => {
      * @param {string} _sender_id 
      */
     const sendCommonResponseToAllClients = async (message_to_client, _chatroom_id, _sender_id) => {
-        const membersChatRoom = findAllMembersInChatRoom(_chatroom_id);
+        const membersChatRoom = await findAllMembersInChatRoom(_chatroom_id);
         let arrayIds = membersChatRoom.map(el => el._id);
         sendPayloadToClient(arrayIds, _sender_id, {
             [message_to_client]: {
