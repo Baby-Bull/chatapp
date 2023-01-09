@@ -3,6 +3,7 @@ const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const connectDB = require("../db/connectDb");
 const cors = require('cors');
+const spdy = require("spdy")
 
 const arrayRouters = require("./router");
 const { setupWss } = require("../../websocket");
@@ -31,7 +32,7 @@ arrayRouters.map((router) => app.use(router.path, router.router))
 const startServer = async () => {
     try {
         await connectDB(process.env.URL_DATABASE_MONGODB)
-        app.listen(staticPort, () => { })
+        spdy.createServer({}, app).listen(staticPort, () => { })
         setupWss();
     } catch (error) {
         console.log(error);
