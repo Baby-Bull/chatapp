@@ -3,7 +3,7 @@ const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const connectDB = require("../db/connectDb");
 const cors = require('cors');
-const spdy = require("spdy")
+const spdy = require("spdy") // use to change http protocol 1.1/2/3 [get over error 426 upgrade required]
 
 const arrayRouters = require("./router");
 const { setupWss } = require("../../websocket");
@@ -32,7 +32,8 @@ arrayRouters.map((router) => app.use(router.path, router.router))
 const startServer = async () => {
     try {
         await connectDB(process.env.URL_DATABASE_MONGODB)
-        spdy.createServer({}, app).listen(staticPort, () => { })
+        //spdy.createServer({}, app)
+        app.listen(staticPort, () => { })
         setupWss();
     } catch (error) {
         console.log(error);
